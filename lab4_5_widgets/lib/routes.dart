@@ -1,6 +1,5 @@
-import 'package:lab4_5_widgets/cleaning_page.dart';
-import 'package:lab4_5_widgets/home_page.dart';
-import 'package:lab4_5_widgets/main.dart';
+import 'package:lab4_5_widgets/screens/cleaning_page.dart';
+import 'package:lab4_5_widgets/screens/home_page.dart';
 
 final routes = {
   '/': (context) => HomePage(),
