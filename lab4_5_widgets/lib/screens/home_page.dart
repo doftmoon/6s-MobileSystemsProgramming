@@ -16,47 +16,80 @@ class _HomePageState extends State<HomePage> {
     var theme = Theme.of(context);
     var titleStyle = theme.textTheme.displaySmall!.copyWith(
       color: theme.colorScheme.onSurface,
+      fontSize: 20,
     );
 
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: [
-            SearchBar(leading: Icon(Icons.search)),
-            SizedBox(height: 16),
-            BigCard(),
-            SizedBox(height: 16),
-            CategorySection(titleStyle: titleStyle),
-            SizedBox(height: 16),
-            RecommendedSection(titleStyle: titleStyle),
+    return SafeArea(
+      child: Scaffold(
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                TopSection(),
+                SizedBox(height: 12),
+                SearchBar(leading: Icon(Icons.search)),
+                SizedBox(height: 24),
+                BigCard(),
+                SizedBox(height: 24),
+                CategorySection(titleStyle: titleStyle),
+                SizedBox(height: 24),
+                RecommendedSection(titleStyle: titleStyle),
+              ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: NavigationBar(
+          destinations: [
+            NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+            NavigationDestination(
+              icon: Icon(Icons.shopping_bag),
+              label: 'Bookings',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.calendar_month_outlined),
+              label: 'Schedule',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.bookmark_border_rounded),
+              label: 'Saved',
+            ),
+            NavigationDestination(
+              icon: Icon(Icons.messenger_outline_rounded),
+              label: 'Message',
+            ),
           ],
+          selectedIndex: selectedIndex,
         ),
       ),
-      bottomNavigationBar: NavigationBar(
-        destinations: [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
-          NavigationDestination(
-            icon: Icon(Icons.shopping_bag),
-            label: 'Booking',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.calendar_month_outlined),
-            label: 'Schedule',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.bookmark_border_rounded),
-            label: 'Saved',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.messenger_outline_rounded),
-            label: 'Message',
-          ),
-        ],
-        selectedIndex: selectedIndex,
-      ),
     );
+  }
+}
+
+class TopSection extends StatelessWidget {
+  const TopSection({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return (Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Row(
+          children: [
+            Icon(Icons.clean_hands),
+            SizedBox(width: 6),
+            Text('HomeChores'),
+          ],
+        ),
+        Row(
+          children: [
+            Icon(Icons.notifications),
+            SizedBox(width: 8),
+            Icon(Icons.account_circle),
+          ],
+        ),
+      ],
+    ));
   }
 }
 
@@ -83,7 +116,8 @@ class RecommendedSection extends StatelessWidget {
           author: 'Rose Conwell',
           rating: 4.1,
           price: 10,
-          image: 'assets/images/cleaning.jpg',
+          image: 'assets/images/cleaning.png',
+          sale: 15,
         ),
         SizedBox(height: 10),
         RecommendedItem(
@@ -91,7 +125,8 @@ class RecommendedSection extends StatelessWidget {
           author: 'Mike Smith',
           rating: 4.1,
           price: 10,
-          image: 'assets/images/repairing.jpg',
+          image: 'assets/images/repairing.png',
+          sale: 17,
         ),
       ],
     );
@@ -106,43 +141,56 @@ class RecommendedItem extends StatelessWidget {
     required this.rating,
     required this.price,
     required this.image,
+    this.sale = 0,
   });
   final String label;
   final String author;
   final num rating;
   final int price;
   final String image;
-  final int sale = 0;
+  final int sale;
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      child: Row(
-        children: [
-          Image(image: AssetImage(image)),
-          SizedBox(width: 5),
-          Expanded(
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [Text(label), Text('Off $sale%')],
-                ),
-                Text('by $author'),
-                Row(
-                  children: [
-                    CardIconText(icon: Icons.star, text: rating.toString()),
-                    SizedBox(width: 5),
-                    CardIconText(
-                      icon: Icons.currency_bitcoin,
-                      text: '$price/h',
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Image(image: AssetImage(image), height: 100, width: 100),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(label),
+                  Text(
+                    'by $author',
+                    style: TextStyle(
+                      color: Colors.black.withValues(alpha: 0.4),
                     ),
-                  ],
-                ),
-              ],
+                  ),
+                  Row(
+                    children: [
+                      CardIconText(
+                        icon: Icons.star,
+                        text: rating.toString(),
+                        color: Colors.yellow.shade100,
+                      ),
+                      SizedBox(width: 5),
+                      CardIconText(
+                        icon: Icons.currency_bitcoin,
+                        text: '$price/h',
+                        color: Colors.indigo.shade50,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Text('Off $sale%'),
+          ],
+        ),
       ),
     );
   }
@@ -170,21 +218,25 @@ class CategorySection extends StatelessWidget {
           children: [
             CategoryItem(
               label: 'Cleaning',
+              color: Colors.lightGreen,
               icon: Icons.cleaning_services,
               route: '/cleaning',
             ),
             CategoryItem(
               label: 'Repairing',
-              icon: Icons.repartition,
+              color: Colors.lightGreen,
+              icon: Icons.home_repair_service,
               route: '/',
             ),
             CategoryItem(
               label: 'Laundry',
+              color: Colors.lightGreen,
               icon: Icons.cleaning_services,
               route: '/',
             ),
             CategoryItem(
               label: 'Painting',
+              color: Colors.lightGreen,
               icon: Icons.format_paint,
               route: '/',
             ),
@@ -200,10 +252,12 @@ class CategoryItem extends StatelessWidget {
     super.key,
     required this.label,
     required this.icon,
+    required this.color,
     required this.route,
   });
   final String label;
   final IconData icon;
+  final Color color;
   final String route;
 
   @override
@@ -214,7 +268,7 @@ class CategoryItem extends StatelessWidget {
           onPressed: () {
             Navigator.pushNamed(context, route);
           },
-          child: Icon(icon),
+          child: Icon(icon, color: color),
         ),
         SizedBox(height: 5),
         Text(label),
@@ -231,10 +285,15 @@ class BigCard extends StatelessWidget {
     var theme = Theme.of(context);
 
     return Card(
-      child: Column(
-        children: [
-          Text('What Services do you need?'),
-          ElevatedButton(onPressed: () {}, child: Text('Get Started')),
+      child: Stack(
+        fit: StackFit.loose,
+        alignment: Alignment.bottomLeft,
+        children: <Widget>[
+          Image.asset('assets/images/cleaning_card.png'),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: ElevatedButton(onPressed: () {}, child: Text('Get Started')),
+          ),
         ],
       ),
     );
