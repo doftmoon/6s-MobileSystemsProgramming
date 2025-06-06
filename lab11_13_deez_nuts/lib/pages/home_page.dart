@@ -163,7 +163,7 @@ class _HomePageState extends State<HomePage> {
           _isLoadingConfig = false;
           print('BLOCK_COLOR: block_color = $colorHex');
         });
-        print('NOTIFS1: test_notif_enabled = $_isNotificationsEnabled');
+        print('NOTIFS1: is_notif_button_enabled = $_isNotificationsEnabled');
       }
     } catch (e) {
       print('Error fetching remote config: $e');
@@ -215,7 +215,7 @@ class _HomePageState extends State<HomePage> {
         leadingWidth: 100,
         leading: Padding(
           padding: const EdgeInsets.only(left: 10.0),
-          child: Image.asset('assets/funny1.jpg', fit: BoxFit.cover),
+          child: Image.asset('assets/funny2.png', fit: BoxFit.scaleDown),
         ),
         title: Text(
           _currentUser != null ? 'Welcome, ${_currentUser!.name}' : 'Home',
@@ -270,7 +270,7 @@ class _HomePageState extends State<HomePage> {
                   _isLoadingConfig || _isOfflineMode
                       ? Colors.grey
                       : _isNotificationsEnabled
-                      ? null
+                      ? Colors.grey
                       : Colors.black,
             ),
             onPressed:
